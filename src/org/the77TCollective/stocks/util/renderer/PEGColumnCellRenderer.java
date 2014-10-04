@@ -1,0 +1,53 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package org.the77TCollective.stocks.util.renderer;
+
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
+
+/**
+ *
+ * @author BobDevelopment
+ */
+public class PEGColumnCellRenderer extends StatColumnCellRenderer {
+    
+    /**
+     *
+     * @param table
+     * @param value
+     * @param isSelected
+     * @param hasFocus
+     * @param row
+     * @param column
+     * @return 
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+    {
+        Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        TableModel model = table.getModel();
+        String s = (String)model.getValueAt(row,column);
+            if (s.compareTo("N/A")==0) {
+                return c;
+            }
+                    
+        Float f = new Float(s);
+        if ((f >= 2) || (f<=0))  // higher number is bad, negative possibly implies declining revenues
+        {
+            c.setBackground(new Color(255,48,48));
+        } else if (f <= 1) {    // sweet spot is between 0 and 1
+            c.setBackground(new Color(84,255,159));;    
+        } else {                // between 1 and 2 is neutral
+            c.setBackground(new Color(255,236,139));
+        }
+        return c;
+    }
+    
+}
