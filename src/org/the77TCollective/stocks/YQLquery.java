@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.paddy.stockmarket.util.json.Diagnostics;
-import org.paddy.stockmarket.util.json.Javascript;
-//import org.the77TCollective.stocks.util.json.Query;
-//import org.the77TCollective.stocks.util.json.QueryContainer;
+import org.the77TCollective.stocks.util.json.Diagnostics;
+import org.the77TCollective.stocks.util.json.Javascript;
+import org.the77TCollective.stocks.util.json.Query;
+import org.the77TCollective.stocks.util.json.QueryContainer;
 
 /**
  *

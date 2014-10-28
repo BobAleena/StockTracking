@@ -13,6 +13,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,15 +25,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -42,7 +46,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import org.paddy.stockmarket.util.image.WindowIcons;
+
+import org.the77TCollective.stocks.util.image.WindowIcons;
 import org.the77TCollective.stocks.util.json.*;
 import org.the77TCollective.stocks.util.json.Query;
 import org.the77TCollective.stocks.util.json.Results;
@@ -60,7 +65,7 @@ import org.the77TCollective.stocks.util.renderer.StatColumnCellRenderer;
 public class MainJFrame extends javax.swing.JFrame
 {
     public static final long serialVersionUID = 12345667890L;
-    private static final String stockmarkets = "Stockmarkets";
+    private static final String stockmarkets = "Stock Analysis";
     private static StockManagerDialog stockManagerDialog;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
     protected HashSet<String> stocksymbols;
@@ -76,8 +81,8 @@ public class MainJFrame extends javax.swing.JFrame
                                            "LeveredFreeCashFlow",
                                            "ShortRatio",
                                            "Industry"};
-    private static final String outputFile = "current_prices.csv";
-    private static final String currentWorkingDirectory = System.getProperty("user.dir") + "/";
+    private static final String outputFile = "current_prices.csv";  //where to put results
+    private static final String currentWorkingDirectory = System.getProperty("user.dir") + "/";  //put in home
     private static Image image;
     private static Dimension preferredScrollableViewportSize = new Dimension(800, 350);
     /**
@@ -250,11 +255,7 @@ public class MainJFrame extends javax.swing.JFrame
                                                     ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
 
         */    
-            
-            
-            
-            
-           //symbols = " \"TGT\" ";
+            //symbols = " \"TGT\" ";
             String YQLqueryString, GETparam, request, keystatsString;
             keystatsString = URLEncoder.encode("use " +
                               "\"https://raw.githubusercontent.com/yql/yql-tables/4404b415f2c5a2353966f7d054c238e29ef1a292/yahoo/finance/yahoo.finance.keystats.xml\" " +
@@ -264,11 +265,11 @@ public class MainJFrame extends javax.swing.JFrame
                                                     "from keystatistics " + //yahoo.finance.keystats " +
                                                     "where symbol in (" + 
                                                     symbols +")" +
-                                                    "| sort(field=\"Symbol\", descending=\"true\")", "UTF-8");
+                                                    "| sort(field=\"symbol\", descending=\"false\")", "UTF-8");
             GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
             request = YQLquery.requestURI + keystatsString + YQLqueryString + GETparam;
-            System.out.println(URLDecoder.decode(request,"UTF-8"));
-            System.out.println("\n\n\n");
+            //System.out.println(URLDecoder.decode(request,"UTF-8"));
+            //System.out.println("\n\n\n");
             query = YQLquery.yqlQueryResult(request);
         }
         catch(UnsupportedEncodingException uee)
@@ -310,11 +311,9 @@ public class MainJFrame extends javax.swing.JFrame
                     Stats stats = iterator.next();
                     symbol = stats.getsymbol();
                     rowData[i][0] = symbol;
-                    //System.out.println(symbol);
                     setCellRenderers(table);
                     pEGRatio = stats.getPEGRatio();
                     rowData[i][1] = pEGRatio.getContent();
-                    //System.out.println(stats.getPEGRatio());
                     forwardPE = stats.getForwardPE();
                     rowData[i][2] = forwardPE.getContent();
                     currentRatio = stats.getCurrentRatio();
@@ -392,9 +391,9 @@ public class MainJFrame extends javax.swing.JFrame
     protected boolean isUpAndReachable()
     {
         boolean isUpAndReachable = false;
-        if(org.paddy.stockmarket.util.net.Network.isAInterfaceUp())
+        if(org.the77TCollective.stocks.util.net.Network.isAInterfaceUp())
         {
-            if(org.paddy.stockmarket.util.net.Network.isReachable(QUERY_YAHOOAPIS_COM))
+            if(org.the77TCollective.stocks.util.net.Network.isReachable(QUERY_YAHOOAPIS_COM))
             {
                 isUpAndReachable = true;
             }

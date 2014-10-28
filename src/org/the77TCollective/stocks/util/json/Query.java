@@ -1,6 +1,6 @@
 package org.the77TCollective.stocks.util.json;
 
-import org.paddy.stockmarket.util.json.Diagnostics;
+import org.the77TCollective.stocks.util.json.Diagnostics;
 //import org.paddy.stockmarket.util.json.Results;
 
 /**
