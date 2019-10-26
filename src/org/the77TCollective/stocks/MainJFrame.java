@@ -64,7 +64,7 @@ import org.the77TCollective.stocks.util.renderer.StatColumnCellRenderer;
  */
 public class MainJFrame extends javax.swing.JFrame
 {
-    public static final long serialVersionUID = 12345667890L;
+    public static final long serialVersionUID = 1234567890L;
     private static final String stockmarkets = "Stock Analysis";
     private static StockManagerDialog stockManagerDialog;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
@@ -81,7 +81,8 @@ public class MainJFrame extends javax.swing.JFrame
                                            "LeveredFreeCashFlow",
                                            "ShortRatio",
                                            "Industry"};
-    private static final String outputFile = "current_prices.csv";  //where to put results
+    
+   // private static final String outputFile = "current_prices.csv";  //where to put results
     private static final String currentWorkingDirectory = System.getProperty("user.dir") + "/";  //put in home
     private static Image image;
     private static Dimension preferredScrollableViewportSize = new Dimension(800, 350);
@@ -101,14 +102,10 @@ public class MainJFrame extends javax.swing.JFrame
         ArrayList<Image> imageList;
         url = getClass().getResource("Stockmarket.png");
         imageList = WindowIcons.createScaledIcons(url);
-        if(!imageList.isEmpty())
-        {
-            if(imageList.size() == WindowIcons.getResolutionSize())
-            {
+        if(!imageList.isEmpty()) {
+            if(imageList.size() == WindowIcons.getResolutionSize()) {
                 this.setIconImages(imageList);
-            }
-            else
-            {
+            } else {
                 image = Toolkit.getDefaultToolkit().getImage(url);
                 this.setIconImage(image);
             }
@@ -116,42 +113,31 @@ public class MainJFrame extends javax.swing.JFrame
         initComponents();
         stocksymbols = getSymbols();
     }
+    
     /**
      *
      * @return HashSet<String> of stock symbols
      */
     @SuppressWarnings("unchecked")
-    protected final HashSet<String> getSymbols()
-    {
+    protected final HashSet<String> getSymbols() {
         HashSet<String> stockSymbols = null;
         boolean exists = (new File("Symbols")).exists();
-        if (exists)
-        {
-            try
-            {
-                FileInputStream fis;
-                BufferedInputStream bis;
-                fis = new FileInputStream("Symbols");
-                bis = new BufferedInputStream(fis);
-                bis.mark(1);
-                int empty = bis.read();
-                if(empty == -1)
-                {
+        if (exists) {
+            try {
+                BufferedInputStream bufferedInputStream;
+                bufferedInputStream = new BufferedInputStream(new FileInputStream("Symbols"));
+                bufferedInputStream.mark(1);
+                int empty = bufferedInputStream.read();
+                if(empty == -1) {
                     System.err.println("File Symbols is empty!");
-                }
-                else
-                {
-                    bis.reset();
-                    ObjectInputStream ois = new ObjectInputStream(bis);
+                } else {
+                    bufferedInputStream.reset();
+                    ObjectInputStream ois = new ObjectInputStream(bufferedInputStream);
                     stockSymbols = (HashSet<String>) ois.readObject();
                 }
-            }
-            catch(FileNotFoundException fnfe)
-            {
+            } catch(FileNotFoundException fnfe) {
                 System.err.println(fnfe);
-            }
-            catch(IOException | ClassNotFoundException e)
-            {
+            } catch(IOException | ClassNotFoundException e) {
                 System.err.println(e);
             }
         }
@@ -162,61 +148,40 @@ public class MainJFrame extends javax.swing.JFrame
      * @param stockSymbols
      */
     @SuppressWarnings("unchecked")
-    public void setSymbols(HashSet<String> stockSymbols)
-    {
+    public void setSymbols(HashSet<String> stockSymbols) {
         HashSet<String> stockSymbolsFile = null;
         boolean exists = (new File("Symbols")).exists();
-        if (exists)
-        {
-            try
-            {
-                FileInputStream fis;
-                BufferedInputStream bis;
-                fis = new FileInputStream("Symbols");
-                bis = new BufferedInputStream(fis);
-                bis.mark(1);
-                int empty = bis.read();
-                if(empty == -1)
-                {
+        if (exists) {
+            try {
+                BufferedInputStream bufferedInputStream;
+                bufferedInputStream = new BufferedInputStream(new FileInputStream("Symbols"));
+                bufferedInputStream.mark(1);
+                int empty = bufferedInputStream.read();
+                if(empty == -1) {
                     System.err.println("File Symbols is empty!");
-                }
-                else
-                {
-                    bis.reset();
-                    ObjectInputStream ois = new ObjectInputStream(bis);
+                } else {
+                    bufferedInputStream.reset();
+                    ObjectInputStream ois = new ObjectInputStream(bufferedInputStream);
                     stockSymbolsFile = (HashSet<String>) ois.readObject();
                 }
-            }
-            catch(FileNotFoundException fnfe)
-            {
+            } catch(FileNotFoundException fnfe) {
                 System.err.println(fnfe);
-            }
-            catch(IOException | ClassNotFoundException e)
-            {
+            } catch(IOException | ClassNotFoundException e) {
                 System.err.println(e);
             }
-        }
-        if(stockSymbolsFile != null && stockSymbols == null)
-        {
+        } 
+        if(stockSymbolsFile != null && stockSymbols == null) {
             stockSymbols.addAll(stockSymbolsFile);
-        }
-        if(stockSymbols.size()<100)
-        {
-            try
-            {
-                FileOutputStream fos;
+        } 
+        if(stockSymbols.size()<100) {
+            try {
                 ObjectOutputStream oos;
-                fos = new FileOutputStream("Symbols");
-                oos = new ObjectOutputStream(fos);
+                oos = new ObjectOutputStream(new FileOutputStream("Symbols"));
                 oos.writeObject(stockSymbols);
                 oos.close();
-            }
-            catch(FileNotFoundException fnfe)
-            {
+            } catch(FileNotFoundException fnfe) {
                 System.err.println(fnfe);
-            }
-            catch(IOException ioe)
-            {
+            } catch(IOException ioe) {
                 System.err.println(ioe);
             }
         }
@@ -245,118 +210,77 @@ public class MainJFrame extends javax.swing.JFrame
                                                          true);
         Object[][] rowData = new Object[stocksymbols.size()][8];
         JTable table = new JTable(rowData, COLUMN_NAMES);
-        try
-        {
-            
-       /*     String YQLqueryString = URLEncoder.encode("select * " +
-                                                    "from yahoo.finance.quotes " +
-                                                    "where symbol in (" + 
-                                                    symbols +
-                                                    ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
-
-        */    
-            //symbols = " \"TGT\" ";
-            String YQLqueryString, GETparam, request, keystatsString;
-            keystatsString = URLEncoder.encode("use " +
-                              "\"https://raw.githubusercontent.com/yql/yql-tables/4404b415f2c5a2353966f7d054c238e29ef1a292/yahoo/finance/yahoo.finance.keystats.xml\" " +
-                              " as keystatistics; ", "UTF-8");
-
-            YQLqueryString = URLEncoder.encode("select symbol, PEGRatio, ForwardPE, CurrentRatio, PriceBook, ShortRatio, LeveredFreeCashFlow " + //Symbol, Name, BidRealtime " +
-                                                    "from keystatistics " + //yahoo.finance.keystats " +
-                                                    "where symbol in (" + 
-                                                    symbols +")" +
-                                                    "| sort(field=\"symbol\", descending=\"false\")", "UTF-8");
-            GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
-            request = YQLquery.requestURI + keystatsString + YQLqueryString + GETparam;
-            //System.out.println(URLDecoder.decode(request,"UTF-8"));
-            //System.out.println("\n\n\n");
-            query = YQLquery.yqlQueryResult(request);
-        }
-        catch(UnsupportedEncodingException uee)
-        {
-                System.err.println(uee);
+        try {   
+            String keyStatsString;
+            keyStatsString = createQuery(symbols);
+            query = YQLquery.yqlQueryResult(YQLquery.requestURI + keyStatsString);
+        } catch(UnsupportedEncodingException uee) {
+            System.err.println(uee);
         }
         System.out.println("This is the query: " + query.toString());
         Results results = query.getResults();
         System.out.println("This is the results " + results);
-        if(results == null)
-        {
+        if(results == null) {
             yahooFinanceQuotesBlocked = true;
             String diagnostics = "placeholder"; //YQLquery.getDiagnostics(query);
             JOptionPane.showMessageDialog(this,
                 diagnostics,
                 "YAHOO Errog",
                 JOptionPane.ERROR_MESSAGE);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 PrintWriter printWriter;
-                printWriter = new PrintWriter(new FileWriter(currentWorkingDirectory + outputFile), true);
-                printWriter.write("Symbol,PEGRatio,ForwardPE, CurrentRatio, PriceBook, LeveredFreeCashFlow, ShortRatio %\r\n");
-                List<Stats> allStats = results.getStats();
-                Iterator<Stats> iterator = allStats.iterator();
+//                printWriter = new PrintWriter(new FileWriter(currentWorkingDirectory + outputFile), true);
+//                printWriter.write("Symbol,PEGRatio,ForwardPE, CurrentRatio, PriceBook, LeveredFreeCashFlow, ShortRatio %\r\n");
+                List<Quote> allQuote = results.getQuotes();
+                Iterator<Quote> allQuoteIterator = allQuote.iterator();
                 int i=0;
-                while (iterator.hasNext())
-                {
+                while (allQuoteIterator.hasNext()) {
                     String symbol;
-                    BaseStockStatContent 
-                            pEGRatio, 
-                            forwardPE,
-                            currentRatio,
-                            priceBook,
-                            leveredFreeCashFlow,
-                            shortRatio;
-                    Stats stats = iterator.next();
-                    symbol = stats.getsymbol();
+                    //BaseStockStatContent pEGRatio, forwardPE,currentRatio,priceBook,leveredFreeCashFlow,shortRatio;
+                    String pEGRatio, forwardPE,currentRatio,priceBook,leveredFreeCashFlow,shortRatio;
+
+                    
+                    Quote quote = allQuoteIterator.next();
+                    System.out.println(quote.toString());
+                    symbol = quote.getSymbol();
+                    System.out.println(symbol);
                     rowData[i][0] = symbol;
                     setCellRenderers(table);
-                    pEGRatio = stats.getPEGRatio();
-                    rowData[i][1] = pEGRatio.getContent();
-                    forwardPE = stats.getForwardPE();
-                    rowData[i][2] = forwardPE.getContent();
-                    currentRatio = stats.getCurrentRatio();
-                    rowData[i][3] = currentRatio.getContent();
-                    priceBook = stats.getPriceBook();
-                    rowData[i][4] = priceBook.getContent();
-                    leveredFreeCashFlow = stats.getLeveredFreeCashFlow();
-                    rowData[i][5] = leveredFreeCashFlow.getContent();
-                    shortRatio = stats.getShortRatio();
-                    rowData[i][6] = shortRatio.getContent();
-                    printWriter.write(rowData[i][0] + "," +
-                                        rowData[i][1] + "," +
-                                        rowData[i][2] + "," +
-                                        rowData[i][3] + "," +
-                                        rowData[i][4] + "," +
-                                        rowData[i][5] + "\r\n");
+                    pEGRatio = quote.getPEGRatio();
+                    rowData[i][1] = pEGRatio;//.getContent();
+                    forwardPE = quote.getForwardPE();
+                    rowData[i][2] = forwardPE;//.getContent();
+                    currentRatio = quote.getCurrentRatio();
+                    rowData[i][3] = currentRatio;//.getContent();
+                    priceBook = quote.getPriceBook();
+                    rowData[i][4] = priceBook;//.getContent();
+                    leveredFreeCashFlow = quote.getLeveredFreeCashFlow();
+                    rowData[i][5] = leveredFreeCashFlow;//.getContent();
+                    shortRatio = quote.getShortRatio();
+                    rowData[i][6] = shortRatio;//.getContent();
+/*                    printWriter.write(rowData[i][0] + "," +
+                                      rowData[i][1] + "," +
+                                      rowData[i][2] + "," +
+                                      rowData[i][3] + "," +
+                                      rowData[i][4] + "," +
+                                      rowData[i][5] + "\r\n");*/
                     System.out.println("Printed...");
                     i++;
                 }
                 System.out.println("All done");
-             /*   pEGRatio = null;
-                forwardPE = null;
-                currentRatio = null;
-                priceBook = null;
-                leveredFreeCashFlow = null;
-                shortRatio = null; */
-                printWriter.flush();
-                printWriter.close();
-            }
-            catch(IOException ioe)
-            {
+                //printWriter.flush();
+              //  printWriter.close();
+            } catch (Exception ioe) {
                 System.err.println(ioe);
             }
         }
-        if(yahooFinanceQuotesBlocked)
-        {
+        if(yahooFinanceQuotesBlocked) {
             jInternalFrame.dispose();
             jInternalFrame = null;
             table = null;
             rowData = null;
-        }
-        else
-        {
+        } else {
             TableColumn column = null;
             JScrollPane scrollPane = new JScrollPane(table);
             table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
@@ -368,6 +292,41 @@ public class MainJFrame extends javax.swing.JFrame
             ComponentAdded = jDesktopPane1.add(jInternalFrame);
             jInternalFrame.setVisible(true);
         }
+    }
+    
+    
+    /**
+     * 
+     * 
+     */
+    private String createQuery(String symbols) throws UnsupportedEncodingException {
+        String query;
+        query = URLEncoder.encode("use " + 
+                //"\"https://raw.githubusercontent.com/yql/yql-tables/4404b415f2c5a2353966f7d054c238e29ef1a292/yahoo/finance/yahoo.finance.keystats.xml\" " +
+               // "\"https://raw.githubusercontent.com/yql/yql-tables/d352c5ec239e2aa3d3d1192ddfa9b6271eb3f42e/yahoo/finance/yahoo.finance.keystats.xml\" " +
+               // "\"https://raw.githubusercontent.com/yql/yql-tables/e50ccc07980c7697be987e37a331af253b032a64/yahoo/finance/yahoo.finance.keystats.xml\" " +    
+            //query = URLEncoder.encode("use " +
+        //        "\"https://raw.githubusercontent.com/yql/yql-tables/yahoo/finance/yahoo.finance.keystats.xml\" " +
+                "\"https://raw.githubusercontent.com/yql/yql-tables/yahoo/finance/yahoo.finance.quotes.xml\" " +
+                " as keystatistics; ", "UTF-8");
+        
+        symbols = "\"aapl\",\"msft\"";
+        
+        query = query + URLEncoder.encode("select symbol, PEGRatio, ForwardPE, CurrentRatio, PriceBook, ShortRatio, LeveredFreeCashFlow " + //Symbol, Name, BidRealtime " +
+                       // "from keystatistics " + //"from yahoo.finance.keystats " +
+                        "from yahoo.finance.quotes " +
+                        "where symbol in (" + 
+                        symbols +")", "UTF-8");// +*/
+                       // "| sort(field=\"symbol\", descending=\"false\")", "UTF-8");
+        query = query + YQLquery.GETparam + URLEncoder.encode(/*"http://datatables.org/alltables.env"*/"store://datatables.org/alltableswithkeys", "UTF-8");
+/*        String YQLqueryString = URLEncoder.encode("select * " +
+                        "from yahoo.finance.quotes " +
+                        "where symbol in (" + 
+                        symbols +
+                        ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
+*/
+           
+        return query;
     }
     
     /**
@@ -390,10 +349,11 @@ public class MainJFrame extends javax.swing.JFrame
      */
     protected boolean isUpAndReachable()
     {
-        boolean isUpAndReachable = false;
+        return true;
+       /* boolean isUpAndReachable = false;
         if(org.the77TCollective.stocks.util.net.Network.isAInterfaceUp())
         {
-            if(org.the77TCollective.stocks.util.net.Network.isReachable(QUERY_YAHOOAPIS_COM))
+            if(org.the77TCollective.stocks.util.net.Network.isReachable("www.cnn.com"))//QUERY_YAHOOAPIS_COM + "/v1/public/yql?"))
             {
                 isUpAndReachable = true;
             }
@@ -412,7 +372,7 @@ public class MainJFrame extends javax.swing.JFrame
                 "Warning",
                 JOptionPane.WARNING_MESSAGE);
         }
-        return isUpAndReachable;
+        return isUpAndReachable;*/
     }
     /**
      * 
@@ -431,6 +391,7 @@ public class MainJFrame extends javax.swing.JFrame
                 symbols += ",";
             }
         }
+        //symbols = "\"TRPL4.SA\"";
         return symbols;
     }
     /**

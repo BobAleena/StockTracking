@@ -127,8 +127,8 @@ public class StockManagerDialog extends javax.swing.JDialog
             else
             {
                 String symbol, name, bidRealtime, lastTradePriceOnly, bidString;
-                List<Stats> allStats = results.getStats();
-                Iterator<Stats> iterator = allStats.iterator();
+                List<Quote> allQuotes = results.getQuotes();
+                Iterator<Quote> iterator = allQuotes.iterator();
                 int i=0;
                 /*while (iterator.hasNext())
                 {

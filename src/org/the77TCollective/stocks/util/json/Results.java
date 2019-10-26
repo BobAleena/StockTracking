@@ -6,22 +6,33 @@ import java.util.List;
  */
 public class Results
 {
-    protected List<Stats> stats;
-    //protected List<Quote> quote;
+    //protected List<Stats> stats;
+    protected List<Quote> quote;
     /**
      *
      * @return List<Quote> quote
      */
-  
-    public List<Stats> getStats()
+    public List<Quote> getQuotes()
+    {
+            return quote;
+    }
+    /*public List<Stats> getStats()
     {
             return stats;
+    }*/
+    /**
+     * @param quote
+     */
+    public void setQuotes(List<Quote> quote)
+    {
+            this.quote = quote;
     }
+
     /**
      * @param stats
      */
-    public void setQuotes(List<Stats> stats)
+/*    public void setStats(List<Stats> stats)
     {
             this.stats = stats;
-    }
+    }*/
 }

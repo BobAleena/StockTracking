@@ -10,7 +10,6 @@ package org.the77TCollective.stocks;
  *
  * @author BobDevelopment
  */
-
 import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -51,42 +50,31 @@ public class Main {
                 int numberOfScreens = 1;
                 int width;
                 int height;
-                try 
-                {
+                try  {
                     GraphicsDevice[] gs = ge.getScreenDevices();
                     numberOfScreens = gs.length;
-                }
-                catch (HeadlessException he)
-                {
+                } catch (HeadlessException he) {
                     System.err.println(he);
                 }
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                if(numberOfScreens > 1)
-                {
+                if(numberOfScreens > 1) {
                     width = screenSize.width;
                     height = screenSize.height;
-                    if(screenSize.width > screenSize.height)
-                    {
+                    if(screenSize.width > screenSize.height) {
                         width = screenSize.width/numberOfScreens;                        
-                    }
-                    else
-                    {
+                    } else {
                         height = screenSize.height/numberOfScreens;
                     }
-                }
-                else
-                {
+                } else {
                     width = screenSize.width;
                     height = screenSize.height;
                 }
                 mainJFrame.setSize(new Dimension((width/2),(height/2)));
                 Dimension frameSize = mainJFrame.getSize();
-                if (frameSize.height > height)
-                {
+                if (frameSize.height > height) {
                     frameSize.height = height;
                 }
-                if (frameSize.width > width)
-                {
+                if (frameSize.width > width) {
                     frameSize.width = width;
                 }
                 mainJFrame.setLocation((width - frameSize.width) / 2, (height - frameSize.height) / 2);
